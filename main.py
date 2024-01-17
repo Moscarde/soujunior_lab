@@ -9,7 +9,11 @@ def main():
     login_linkedin, password_linkedin = load_env_variables()
 
     new_data = scrap_linkedin_posts(
-        login_linkedin, password_linkedin, headless=True, scroll_to_load_posts=30
+        login_linkedin,
+        password_linkedin,
+        page_posts_url="https://www.linkedin.com/company/soujunior/posts/?feedView=all",
+        headless=True,
+        scroll_to_load_posts=15,
     )
 
     process_and_save_data(new_data)
@@ -25,7 +29,11 @@ def load_env_variables():
 
 
 def scrap_linkedin_posts(
-    login_linkedin, password_linkedin, headless=False, scroll_to_load_posts=5
+    login_linkedin,
+    password_linkedin,
+    page_posts_url,
+    headless,
+    scroll_to_load_posts,
 ):
     print("Starting driver...")
     scraper = LinkedInScraper(login_linkedin, password_linkedin, headless)
@@ -34,7 +42,7 @@ def scrap_linkedin_posts(
     scraper.login()
 
     print("Navigating to posts...")
-    scraper.navigate_to_posts()
+    scraper.navigate_to_posts(page_posts_url)
 
     print("Sorting by date...")
     scraper.sort_by_date()
