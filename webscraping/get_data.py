@@ -57,10 +57,7 @@ class LinkedInScraper:
         else:
             print("Login failed")
 
-    def navigate_to_posts(self):
-        linkedin_page_url = (
-            "https://www.linkedin.com/company/soujunior/posts/?feedView=all"
-        )
+    def navigate_to_posts(self, linkedin_page_url):
         self.driver.get(linkedin_page_url)
 
     def sort_by_date(self):
@@ -145,7 +142,7 @@ def main():
     print('Logging in...')
     scraper.login()
     print('Navigating to posts...')
-    scraper.navigate_to_posts()
+    scraper.navigate_to_posts("https://www.linkedin.com/company/soujunior/posts/?feedView=all")
     print('Sorting by date...')
     scraper.sort_by_date()
     print('Scrolling to load posts...')
@@ -160,4 +157,10 @@ def main():
 
 
 if __name__ == "__main__":
-    new_posts = main()
+    load_dotenv()
+
+    login_linkedin = os.environ["LOGIN_LINKEDIN"]
+    password_linkedin = os.environ["PASSWORD_LINKEDIN"]
+
+    print('Starting driver...')
+    scraper = LinkedInScraper(login_linkedin, password_linkedin, headless=True)

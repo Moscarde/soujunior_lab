@@ -21,9 +21,7 @@ class DataHandler:
 
             linkedin_post_id = post_url.split(":")[-1]
 
-            if (
-                int(linkedin_post_id) in self.dataframe_post_ids
-            ) or publish_date == None:
+            if publish_date == None:
                 continue
 
             shared_post = self.is_shared_post(post)
@@ -231,6 +229,10 @@ class DataHandler:
         )
 
     def append_data_to_dataframe_and_save(self, processed_dataframe):
+        for index, row in processed_dataframe.iterrows():
+            if row["linkedin_post_id"] in self.dataframe_post_ids:
+                self.dataframe.loc[self.dataframe["linkedin_post_id"] == row["linkedin_post_id"], "updated_reactions"] = row["qtd_reaction"]
+
         concated_df = pd.concat(
             [processed_dataframe, self.dataframe], ignore_index=True
         )
@@ -238,6 +240,7 @@ class DataHandler:
 
 
 if __name__ == "__main__":
+    #running with staged data from get_data.py
     staged_data_path = "linkedin_page/staged_data/"
     staged_filenames = os.listdir(staged_data_path)
     soup_list = []
@@ -245,10 +248,11 @@ if __name__ == "__main__":
         with open(staged_data_path + filename, "r", encoding="utf8") as file:
             soup_list.append(BeautifulSoup(file, "html.parser"))
 
-    print(type(soup_list[0]))
-    # main_dataframe_path = "linkedin_page/dataframes/main_dataframe.csv"
 
-    # data_handler = DataHandler(main_dataframe_path, soup_list)
-    # processed_data = data_handler.process_data_to_dataframe()
+    main_dataframe_path = "linkedin_page/dataframes/main_dataframe.csv"
+
+    data_handler = DataHandler(main_dataframe_path, soup_list)
+    processed_data = data_handler.process_data_to_dataframe()
+    print(processed_data)
     # data_handler.backup_dataframe()
     # data_handler.append_data_to_dataframe_and_save(processed_data)
